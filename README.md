@@ -4,7 +4,7 @@ Image enhancement with CNNs based on ["Deep Learning for Image Enhancement"](htt
 
 # Related Link
 
-[Hugginfacr](https://huggingface.co/spaces/Gogol1987/EnhanceImage)
+[Hugginface](https://huggingface.co/spaces/Gogol1987/EnhanceImage)
 
 # Citation
 
