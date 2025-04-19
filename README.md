@@ -8,6 +8,5 @@ Image enhancement with CNNs based on ["Deep Learning for Image Enhancement"](htt
 
 # Citation
 
-P. Bhattacharya, P. Nowak, "Drone Detection and Tracking with YOLO and a Rule-based Method", arXiv, 2025, arXiv:2502.05292
-
-https://arxiv.org/abs/2502.05292
+P. Bhattacharya, "Deep Learning for Image Enhancement", Helmut-Schmidt-Universität/Universität der Bundeswehr Hamburg, 2022, 10.24405/14267
+https://openhsu.ub.hsu-hh.de/entities/publication/14267
