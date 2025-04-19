@@ -17,8 +17,11 @@ scikit-image
 # for access to torchvision.transforms.v2. Check compatibility
 # or dependency issues with other python packages.
 
-#torch==2.4.1, # 1.10.0a0+0aef44c
-#torchvision==0.19.1 # 0.11.0a0
+torch
+torchvision
+torchmetrics
+pytorch-msssim
+
 # -----------------------------------------------
 
 tqdm
