@@ -1,0 +1,9 @@
+# Train/val/test sets as 1) dir: path/to/imgs, 2) file: path/to/imgs.txt, or 3) list: [path/to/imgs1, path/to/imgs2, ..]
+# path: dataset/dronedataset  # dataset root dir
+train: ./datasets/enhancement/DIV2K_train_HR/train  # train images (relative to 'path') 128 images
+val: ./datasets/enhancement/DIV2K_train_HR/val  # val images (relative to 'path') 128 images
+test: ./datasets/enhancement/DIV2K_train_HR/val # test images (optional)
+
+#train: ./datasets/enhancement/Train400  # train images (relative to 'path') 128 images
+#val: ./datasets/enhancement/Train400  # val images (relative to 'path') 128 images
+#test: ./datasets/enhancement/Train400 # test images (optional)

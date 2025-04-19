@@ -1,0 +1,14 @@
+# SR
+set5: ./datasets/test/Set5
+set14: ./datasets/test/Set14
+bsd100: ./datasets/test/BSD100
+urban100: ./datasets/test/Urban100
+sr119: ./datasets/test/SR119 # all images from the above folders
+
+# DN
+set12: ./datasets/test/Set12
+bsd68: ./datasets/test/BSD68
+
+# CAR
+live1: ./datasets/test/LIVE1
+classic5: ./datasets/test/classic5

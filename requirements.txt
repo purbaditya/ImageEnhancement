@@ -1,0 +1,56 @@
+# Usage: pip install -r requirements.txt
+
+# Base ----------------------------------------
+numpy==1.26.4 # 1.21.2
+matplotlib
+opencv-python==4.8.0.76
+Pillow
+PyYAML
+requests
+scipy
+scikit-learn
+scikit-image
+
+# ----------------------------------------------------------
+# Depending on nvidia-driver version one can install
+# later torch (> 2.0.0) and torchvision (> 0.15.1) packages
+# for access to torchvision.transforms.v2. Check compatibility
+# or dependency issues with other python packages.
+
+#torch==2.4.1, # 1.10.0a0+0aef44c
+#torchvision==0.19.1 # 0.11.0a0
+# -----------------------------------------------
+
+tqdm
+protobuf>3.18.1
+pytorch-msssim
+lpips
+patchify
+
+# Logging -------------------------------------
+tensorboard>=2.4.1 # 2.6.0
+# wandb
+
+# Plotting ------------------------------------
+pandas
+seaborn
+
+# NiceGui -------------------------------------
+Markdown==3.1.1
+nicegui
+
+# Export --------------------------------------
+# coremltools>=4.1  # CoreML export
+# onnx>=1.9.0  # ONNX export
+# scikit-learn==0.19.2  # CoreML quantization
+# tensorflow>=2.4.1  # TFLite export
+# tensorflowjs>=3.9.0  # TF.js export
+# openvino-dev  # OpenVINO export
+
+# Extras --------------------------------------
+ipython  # interactive notebook
+psutil  # system utilization
+thop  # FLOPs computation
+# albumentations>=1.0.3
+# pycocotools>=2.0  # COCO mAP
+# roboflow
