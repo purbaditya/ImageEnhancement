@@ -91,6 +91,7 @@ def train_step(model, device, epochs_, epoch, dataloader, optimizer, loss_fn, lo
         # update
         loss = process_loss(Y_p, Y_pred, Y, loss_fn, loss_fn_perc, loss_fn_dft, loss_fn_ssim)
 
+        X = upscale(X, Y)
         loss_hq = nn.MSELoss(reduction='sum')(Y_pred,Y)
         loss_lq = nn.MSELoss(reduction='sum')(X,Y)
         trainloss += loss_hq.item()           # accumulate L2 loss
@@ -105,7 +106,6 @@ def train_step(model, device, epochs_, epoch, dataloader, optimizer, loss_fn, lo
         mem = torch.cuda.memory_reserved()/(1024**3) if torch.cuda.is_available() else 0
 
         # calculate psnr and ssim
-        X = upscale(X, Y)
         psnr_lq = 10*math.log10(2*volume/(trainlosslq/(i+1)))
         trainpsnrlq += psnr_lq
         psnr_hq = 10*math.log10(2*volume/(trainloss/(i+1)))
@@ -144,6 +144,7 @@ def val_step(model, device, dataloader, loss_fn, writer):
             Y_pred = Y_p[1] if type(Y_p) is tuple else Y_p
 
             # calculate and accumulate loss
+            X = upscale(X, Y)            
             loss_hq = nn.MSELoss(reduction='sum')(Y_pred,Y)
             loss_lq = nn.MSELoss(reduction='sum')(X,Y)
             valloss += loss_hq.item()
@@ -151,8 +152,7 @@ def val_step(model, device, dataloader, loss_fn, writer):
 
             mem = torch.cuda.memory_reserved()/(1024**3) if torch.cuda.is_available() else 0
             
-            # calculate psnr and ssim
-            X = upscale(X, Y)           
+            # calculate psnr and ssim           
             valpsnrlq += 10*math.log10(2*volume/(vallosslq/(i+1)))     # psnr(X,Y)
             valpsnr += 10*math.log10(2*volume/(valloss/(i+1)))    # psnr(Y_pred,Y)
             valssim += ssim_(Y_pred,Y)

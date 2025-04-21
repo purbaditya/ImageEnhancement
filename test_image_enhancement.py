@@ -144,15 +144,13 @@ def test(args, device):
         else:
             Y_pred = Y_p
 
+        X = upscale(X, Y)
         Y_pred = Y_pred.squeeze(0).squeeze(0).cpu().detach().numpy().astype(np.float32)
         X = X.squeeze(0).squeeze(0).cpu().detach().numpy().astype(np.float32)
         Y = Y.squeeze(0).squeeze(0).cpu().detach().numpy().astype(np.float32)
         
-        ## Convert to RGB or YCbCr 
-        # if not args.gray and len(label.shape) > 2:
-        #     image_pred = YCbCr2RGB(Y_pred,Cb,Cr,True)
-        #     image_bic = YCbCr2RGB(X.squeeze(0),Cb,Cr,True)
-        #     label = YCbCr2RGB(Y,Cb,Cr,False)
+        ## Convert to RGB or YCbCr
+        # ---- 
 
         testpsnr_hq += compare_psnr(Y_pred, Y, data_range=1)
         testssim_hq += compare_ssim(Y_pred, Y, data_range=1)
