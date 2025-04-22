@@ -51,7 +51,7 @@ class MultChannelRegressionNetAtt(nn.Module):
         self.net_a = nn.Sequential(*layers_a)
         layers_b.append(ConvAct(1, 64, 3, 1, 1, init=init, gain=gain, bias=True))
         for _ in range(numreslayers):
-            layers_b.append(IncpAtt(64, (32,16,8,8), 64, 3, 1, (1,2,3,5), (1,2,3,5), 2, init=init, gain=gain), BN=BN)
+            layers_b.append(IncpAtt(64, (32,16,8,8), 64, 3, 1, (1,2,3,5), (1,2,3,5), 2, init=init, gain=gain, BN=BN))
         layers_b.append(ConvAct(64, 1, 3, 1, 1, act=False, init=init, gain=gain))
         self.net_b = nn.Sequential(*layers_b)
 
