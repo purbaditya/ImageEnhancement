@@ -102,12 +102,15 @@ def upscale(image,label):
 
 def generate_lossy_images(data_dir, data_dir_lossy, quality):
     if not os.path.isdir(data_dir_lossy):
-        os.mkdir(data_dir_lossy)
+        os.makedirs(data_dir_lossy)
     file_list = glob.glob(data_dir+'/*.png')
     for i in range(len(file_list)):
         image = Image.open(file_list[i])
-        file_name = file_list[i].split('/')[-1].split('.')[0]
-        image.save(data_dir_lossy+'/'+file_name+'.jpeg', quality= quality, subsampling=2, keep_rgb=True)
+        file_name = file_list[i].split('\\')[-1].split('.')[0]
+        #file_name = file_list[i].split('/')[-1].split('.')[0]
+        file_ = data_dir_lossy+'/'+file_name+'.jpeg'
+        if not os.path.isfile(file_):
+            image.save(file_, format='jpeg', quality= quality, keep_rgb=True)
 
 # generation of patch tensors
 # modified from https://github.com/cszn/DnCNN
@@ -142,14 +145,15 @@ def generate_patches(file_name, patch_size, scales, aug_times, isgray, deblockin
     h, w = image.shape
 
     if deblocking:
-        image_name = file_name.split('/')[-1]
+        image_name = file_name.split('\\')[-1]
+        # image_name = file_name.split('/')[-1]
         file_name_lq = file_name.replace('/'+image_name,'Lossy/'+str(quality)+'/'+image_name.replace('png','jpeg'))
         image_lq = Image.open(file_name_lq)
         if len(image_lq.split())<3:
             image_lq = np.expand_dims(np.asarray(image_lq), axis=2)
         else:
             image_lq,_,_ = image_lq.convert('YCbCr').split()
-            image_lq = np.expand_dims(np.asarray(image_lq), axis=2)
+            image_lq = np.expand_dims(np.asarray(image_lq)/255, axis=2)
         image = np.expand_dims(image, axis=2)
         image = np.concatenate((image_lq,image),axis=2)
         h, w, _ = image.shape
@@ -166,14 +170,14 @@ def generate_patches(file_name, patch_size, scales, aug_times, isgray, deblockin
         if img_scaled.max() > 2:
             img_scaled = img_scaled.astype(np.float32)/255
         # extract patches
-        for i in range(0, h_scaled-patch_size+1, int(2*patch_size)):
-            for j in range(0, w_scaled-patch_size+1, int(2*patch_size)):
+        for i in range(0, h_scaled-patch_size+1, int(1.8*patch_size)):
+            for j in range(0, w_scaled-patch_size+1, int(1.8*patch_size)):
                 if len(img_scaled.shape)>2:
                     x = img_scaled[i:i+patch_size, j:j+patch_size,:]
                 else:
                     x = img_scaled[i:i+patch_size, j:j+patch_size]
                 for k in range(0, aug_times):
-                    if x.shape==(patch_size,patch_size):
+                    if x.shape[:2]==(patch_size,patch_size):
                         x_aug = data_augmentation(x, mode=np.random.randint(0, 8))
                         patches.append(x_aug)
     return patches
