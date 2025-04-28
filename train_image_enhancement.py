@@ -144,7 +144,7 @@ def val_step(model, device, dataloader, loss_fn, writer):
             Y_pred = Y_p[1] if type(Y_p) is tuple else Y_p
 
             # calculate and accumulate loss
-            X = upscale(X, Y)            
+            X = upscale(X, Y)
             loss_hq = nn.MSELoss(reduction='sum')(Y_pred,Y)
             loss_lq = nn.MSELoss(reduction='sum')(X,Y)
             valloss += loss_hq.item()
@@ -190,7 +190,8 @@ def train(args, device, tb_writer):
 
     traindir, valdir = datadict['train'], datadict['val']
     deblocking = True if task == 'car' else False
-    datatrain = datagenerator(data_dir=traindir, patch_size=imagesize, batch_size=batchsize, is_gray=False, deblocking=deblocking, quality=quality)
+    is_gray = True if task == 'car' else False
+    datatrain = datagenerator(data_dir=traindir, patch_size=imagesize, batch_size=batchsize, is_gray=is_gray, deblocking=deblocking, quality=quality)
     maxval = 255.0 if datatrain.max() > 2.0 else 1.0
     #maxval = datatrain.max()
     datatrain = datatrain.astype('float32')/maxval # if uint8 or 0 < val < 255 /255.0
@@ -222,7 +223,7 @@ def train(args, device, tb_writer):
         # model = DnCNN().to(device)
         model = CustomRegressionNetAtt(numlayers=9).to(device) #CustomRegressionNet(numlayers=15).to(device)
     elif task=='misr':
-        model = MultChannelRegressionNetAtt(scale=factor,numlayers=6,numreslayers=4).to(device)
+        model = MultChannelRegressionNetAtt(scale=factor,numlayers=7,numreslayers=5).to(device)
     elif task=='dn':
         model = CustomDenosingRegressionNetAtt(numlayers=12).to(device)
 
@@ -261,9 +262,9 @@ def train(args, device, tb_writer):
     scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[15,30,50,80], gamma=0.7)
 
     # Define loss functions
-    loss_fn = SSELoss().to(device) #nn.MSELoss(reduction='sum').to(device) # CustomRegressionLoss(1,1).to(device)
+    loss_fn = RegLoss().to(device) #nn.MSELoss(reduction='sum').to(device) # CustomRegressionLoss(1,1).to(device)
     loss_fn_perc = None
-    loss_fn_dft = None # DFTLoss(2).to(device) if task=='car' else None
+    loss_fn_dft = None #DFTLoss().to(device) if task=='car' else None
     loss_fn_ssim = SSIMLoss(1e-4).to(device)
 
     # Initialize results dictionary
@@ -361,9 +362,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--weights',type=str,default='',help='select path of pretrained weights or saved weights')
     parser.add_argument('--data',type=str,default='data/traindataset.yaml',help='select the ml file for the appropriate training dataset')
-    parser.add_argument('--task',type=str,default='dn',help='multiimage(misr),singleimage(sisr),denoising(dn),compressionartefactremoval(car)')
+    parser.add_argument('--task',type=str,default='car',help='multiimage(misr),singleimage(sisr),denoising(dn),compressionartefactremoval(car)')
     parser.add_argument('--factor',type=int,default=2,help='select superresolution factor')
-    parser.add_argument('--stddev',type=int,default=15,help='select denoising sigma')
+    parser.add_argument('--stddev',type=int,default=25,help='select denoising sigma')
     parser.add_argument('--quality',type=int,default=10,help='select quality factor compression artefact removal')
     parser.add_argument('--epochs',type=int,default=80,help='Number of Epochs')
     parser.add_argument('--batchsize', type=int, default=12, help='total batch size for all CPUs/GPUs')

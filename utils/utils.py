@@ -13,7 +13,7 @@ from skimage.io import imread, imsave
 from skimage.color import rgb2ycbcr, rgb2gray
 from skimage.transform import rescale
 from torch.nn.init import xavier_uniform_, xavier_normal_, kaiming_uniform_, kaiming_normal_, uniform_, normal_, sparse_, constant_, orthogonal_
-from PIL import Image
+from PIL import Image, ImageOps
 
 # Collection of several functions, including a few collected from various sources provided below and modified
 # https://github.com/cszn/DnCNN
@@ -100,17 +100,19 @@ def upscale(image,label):
             image = torch.nn.functional.interpolate(image[:,0,:,:].unsqueeze(1), scale_factor=scale,mode='bicubic')
         return image
 
-def generate_lossy_images(data_dir, data_dir_lossy, quality):
+def generate_lossy_images(data_dir, data_dir_lossy, isgray, quality):
     if not os.path.isdir(data_dir_lossy):
         os.makedirs(data_dir_lossy)
     file_list = glob.glob(data_dir+'/*.png')
     for i in range(len(file_list)):
-        image = Image.open(file_list[i])
+        image = imread(file_list[i], as_gray=isgray)
         file_name = file_list[i].split('\\')[-1].split('.')[0]
         #file_name = file_list[i].split('/')[-1].split('.')[0]
+        if len(image.split()) == 3:
+            image, _, _ = image.convert('YCbCr').split()
         file_ = data_dir_lossy+'/'+file_name+'.jpeg'
         if not os.path.isfile(file_):
-            image.save(file_, format='jpeg', quality= quality, keep_rgb=True)
+            image.save(file_, format='jpeg', quality= quality, keep_rgb=False)
 
 # generation of patch tensors
 # modified from https://github.com/cszn/DnCNN
@@ -147,10 +149,10 @@ def generate_patches(file_name, patch_size, scales, aug_times, isgray, deblockin
     if deblocking:
         image_name = file_name.split('\\')[-1]
         # image_name = file_name.split('/')[-1]
-        file_name_lq = file_name.replace('/'+image_name,'Lossy/'+str(quality)+'/'+image_name.replace('png','jpeg'))
+        file_name_lq = file_name.replace('\\'+image_name,'Lossy/'+str(quality)+'\\'+image_name.replace('png','jpeg'))
         image_lq = Image.open(file_name_lq)
         if len(image_lq.split())<3:
-            image_lq = np.expand_dims(np.asarray(image_lq), axis=2)
+            image_lq = np.expand_dims(np.asarray(image_lq)/255, axis=2)
         else:
             image_lq,_,_ = image_lq.convert('YCbCr').split()
             image_lq = np.expand_dims(np.asarray(image_lq)/255, axis=2)
@@ -188,7 +190,7 @@ def datagenerator(data_dir='datasets/enhancement/Train400', patch_size=40, batch
     if deblocking:
         file_list_lq = glob.glob(data_dir+'Lossy/'+str(quality)+'/*.png')
         if not file_list_lq:
-            generate_lossy_images(data_dir, data_dir+'Lossy/'+str(quality),quality)
+            generate_lossy_images(data_dir, data_dir+'Lossy/'+str(quality), is_gray, quality)
     # initialize
     data = []
     # generate patches
