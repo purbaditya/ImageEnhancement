@@ -44,7 +44,7 @@ nicegui
 
 # Export --------------------------------------
 # coremltools>=4.1  # CoreML export
-# onnx>=1.9.0  # ONNX export
+onnx # ONNX export
 # scikit-learn==0.19.2  # CoreML quantization
 # tensorflow>=2.4.1  # TFLite export
 # tensorflowjs>=3.9.0  # TF.js export
